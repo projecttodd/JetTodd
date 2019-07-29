@@ -1,33 +1,46 @@
-#include <ros/ros.h>
-#include <geomety_msgs/Twist.h>
+#include "ros/ros.h"
+#include "std_msgs/Int8.h"
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+#include <sstream>
+int8 input;
+input = 5;
+int main(int argc, char **argv)
+{
+  sf::RenderWindow window(sf::VideoMode(500,500), "Controls");
+  ros::init(argc, argv, "robot")
+  ros::NodeHandle n;
 
-int main(int argc, char **argv){
-    ros::init(argc, argv, "motor_control");
-    ros::NodeHandle nh;
-    ros::Publisher vel_pub;
-    geometry_msgs::Twist vel_msg;
-    vel_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+  ros::Publisher input_pub = n.advertise<std_msgs::Int8>("direction_input", 1000);
+  ros::Rate loop_rate(10);
+  while (window.isOpen())
+  {
+    while(ros::ok())
+    {
+      sf::Event event;
+      std_msgs::Int8 msg;
 
-    while (ros::ok()){
-        ROS_INFO("Forward");
-        vel_msg.linear.x = 1.0;
-        vel_msg.angular.z = 0;
-        vel_pub.publish(vel_msg);
-        ros::Duration(1.0).sleep();
+      while (window.pollEvent(event))
+      {
+        if (event.type == sf::Event::Closed)
+          window.close();
+      }
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        input = 1;
+      else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+          input = 2;
+      else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+          input = 3;
+      else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+          input = 4;
+      else if (!sf::Keyboard::isKeyPressed())
+          input = 5;
 
-        ROS_INFO("Backward");
-        vel_msg.linear.x = -0.8;
-        vel_msg.angular.z = 0;
-        vel_pub.publish(vel_msg);
-        ros::Duration(1.0).sleep();
-
-        ROS_INFO("Left Turn");
-        vel_msg.linear.x = 0;
-        vel_msg.angular.z = 2.0;
-        vel_pub.publish(vel_msg);
-        ros::Duration(1.0).sleep();
-
-        ros::spinOnce();
+      msg.data = input;
+      input_pub.publish(msg);
+      ros::spinOnce();
+      loop_rate.sleep();
     }
-
+  }
+  return 0;
 }
