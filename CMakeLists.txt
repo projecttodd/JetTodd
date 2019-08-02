@@ -199,6 +199,13 @@ include_directories(
 # catkin_add_nosetests(test)
 
 add_executable(robotMain src/robotMain.cpp)
-set_target_properties(robotMain PROPERTIES LINKER_LANGUAGE CXX)
+add_executable(servo src/servo.cpp)
+add_executable(GUIPub src/GUIPub.cpp)
+
+
 
 target_link_libraries(robotMain ${catkin_LIBRARIES})
+target_link_libraries(servo ${catkin_LIBRARIES})
+target_link_libraries(GUIPub ${catkin_LIBRARIES})
+target_link_libraries(GUISub ${catkin_LIBRARIES})
+
