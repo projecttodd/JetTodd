@@ -1,0 +1,6 @@
+<launch>
+
+<include file="$(find finaltodbottest)/launch/GUIPub.launch">
+ </include>
+<node pkg="finaltodbottest" type="GUISub" name="GUISub" output="screen"/>
+</launch>
